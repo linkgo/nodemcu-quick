@@ -1,0 +1,83 @@
+> dofile(ls.lua)
+name: init.lua			size: 49
+name: hello.lua			size: 54
+name: ls.lua			size: 78
+name: cat.lua			size: 85
+name: lsap.lua			size: 100
+name: mqtt_conn.lua		size: 352
+name: mqtt_pub.lua		size: 97
+name: mqtt_pub_10s.lua		size: 165
+name: mqtt_pub_300s.lua		size: 166
+name: mqtt_pub_forever.lua	size: 117
+name: mqtt_sub.lua		size: 69
+
+> assert(loadfile(cat.lua))(init.lua)
+args: init.lua
+uart.setup(0,115200,8,0,1)
+
+> assert(loadfile(cat.lua))(hello.lua)
+args: hello.lua
+print(hello nodemcu from librae)
+print(node.heap())
+
+> assert(loadfile(cat.lua))(ls.lua)
+args: ls.lua
+l = file.list()
+for k,v in pairs(l) do
+  print(name: ..k..,size: ..v)
+end
+
+> assert(loadfile(cat.lua))(cat.lua)
+args: cat.lua
+local f=...
+print(args: ..f)
+
+file.open(f, r)
+print(file.read(EOF))
+file.close()
+
+> assert(loadfile(cat.lua))(lsap.lua)
+args: lsap.lua
+function listap(t)
+  for k,v in pairs(t) do
+    print(k.. : ..v)
+  end
+end
+wifi.sta.getap(listap)
+
+> assert(loadfile(cat.lua))(mqtt_conn.lua)
+args: mqtt_conn.lua
+m = mqtt.Client(nodemcu, 120, nil, nil)
+
+m:on(connect, function(con)
+  print (connected) end)
+m:on(offline, function(con)
+  print (offline) end)
+
+m:on(message, function(conn, topic, data)
+  print(topic .. : )
+  if data ~= nil then
+    print(data)
+  end
+end)
+
+m:connect(IP_ADDR, 1883, 0, function(conn)
+  print(connected) end)
+
+> assert(loadfile(cat.lua))(mqtt_pub.lua)
+args: mqtt_pub.lua
+m:publish(/nodemcu/report, nodemcu: ..adc.read(0), 0, 0, function(conn)
+  print(sent) end)
+
+> assert(loadfile(cat.lua))(mqtt_pub_10s.lua)
+args: mqtt_pub_10s.lua
+print(start publishing...)
+tmr.alarm(0, 1000, 1, function() dofile(mqtt_pub.lua) end)
+tmr.alarm(1, 10000, 0, function() print(stopping tmr 0) tmr.stop(0) end)
+
+> assert(loadfile(cat.lua))(mqtt_sub.lua)
+args: mqtt_sub.lua
+m:subscribe(+, 0, function(conn)
+  print(subscribe success) end)
+
+>

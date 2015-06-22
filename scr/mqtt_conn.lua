@@ -1,11 +1,9 @@
-m = mqtt.Client(nodemcu, 120, nil, nil)
+m = mqtt.Client("nodemcu", 120, nil, nil)
 
-m:on(connect, function(con)
-  print ("connected") end)
-m:on(offline, function(con)
-  print ("offline") end)
+m:on("connect", function(con) print ("connected") end)
+m:on("offline", function(con) print ("offline") end)
 
-m:on(message, function(conn, topic, data)
+m:on("message", function(conn, topic, data)
   print(topic.." : ")
   if data ~= nil then
     print(data)

@@ -1,4 +1,4 @@
-m = mqtt.Client("nodemcu", 120, nil, nil)
+m = mqtt.Client("o_node", 120, nil, nil)
 
 m:on("connect", function(con)
   print ("connected")
@@ -8,16 +8,20 @@ m:on("offline", function(con)
 end)
 
 m:on("message", function(conn, topic, data)
-  print("topic: "..topic..":")
+  print("topic: "..topic)
   if data ~= nil then
-    print(data)
+    print("data: "..data)
     if topic == "/nodemcu/output" then
       print("output")
       if data == "1" then
         -- gpio low for led on
-        assert(loadfile("gpio_output.lua"))(4,0)
+        --assert(loadfile("gpio_output.lua"))(4,0)
+        gpio.write(4, gpio.LOW)
+        gpio.mode(4, gpio.OUTPUT)
       else
-        assert(loadfile("gpio_output.lua"))(4,1)
+        --assert(loadfile("gpio_output.lua"))(4,1)
+        gpio.write(4, gpio.HIGH)
+        gpio.mode(4, gpio.OUTPUT)
       end
     else
       print("ignore")

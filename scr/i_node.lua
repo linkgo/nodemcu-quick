@@ -16,6 +16,9 @@ end)
 
 m:connect("IP_ADDR", 1883, 0, function(conn)
   print("connected")
+  -- gpio[2] low, indicates connected
+  gpio.write(4, gpio.LOW)
+  gpio.mode(4, gpio.OUTPUT)
   dofile("mqtt_pub_forever.lua")
 end)
 

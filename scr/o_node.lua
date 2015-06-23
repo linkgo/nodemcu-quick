@@ -33,6 +33,8 @@ m:connect("IP_ADDR", 1883, 0, function(conn)
   print("connected")
   m:subscribe("+", 0, function(conn)
     print("subscribe success")
+      -- gpio[2] low, indicates subscribed
+      gpio.write(4, gpio.LOW)
+      gpio.mode(4, gpio.OUTPUT)
   end)
 end)
-
